@@ -1,0 +1,33 @@
+{
+  "AFIRME": {
+    "protocol": "REST",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTMwNzMzMTQsInVzZXJfbmFtZSI6IkdBUkZJT0BDRU5DRVJSTy5DT00iLCJhdXRob3JpdGllcyI6WyJVU1IiXSwianRpIjoiNTI1MWZhYTUtMTM0ZC00NDEwLTk4YTUtYTZmZTdjNTJhMmNhIiwiY2xpZW50X2lkIjoiUG9ydGFsQWdlbnRlcyIsInNjb3BlIjpbInJlYWQiLCIgd3JpdGUiXX0.8IULeX8zcOc6j34AGizyvT004363Gnk6ZX373hTrPec",
+    "URL": "https://www.afirmeseguros.com/gateway/catalogs",
+    "authentication": "bearer",
+    "entry": "data",
+    "endpoints": {
+      "models": {
+        "method": "GET",
+        "URL": "/vehicles/models",
+        "params": {
+          "year": null,
+          "typeID": "1",
+          "brandID": null
+        }
+      }
+    }
+  },
+  "ANA_SEGUROS": {
+    "protocol": "SOAP",
+    "url": "https://server.anaseguros.com.mx/ananetws/service.asmx",
+    "base": {
+      "": ""
+    }
+  },
+  "HDI": {
+    "protocol": "SOAP",
+    "url": "https://enterpriseservices.implementation.hdi.com.mx/B2B/Partners/WCF/Autos",
+    "authentication": ""
+  },
+  "GNP": {}
+}

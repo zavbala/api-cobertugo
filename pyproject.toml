@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "cobertugo"
+version = "0.1.0"
+description = ""
+authors = ["Jeremy Zabala <jeremy.zbala@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+httpx = "^0.24.1"
+beautifulsoup4 = "^4.12.2"
+fastapi = "^0.101.1"
+uvicorn = "^0.23.2"
+pandas = "^2.0.3"
+lxml = "^4.9.3"
+pydantic = "^2.2.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+pytest = "^7.4.0"
+
+[tool.pytest.ini_options]
+addopts = "-s"
+minversion = "6.0"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
