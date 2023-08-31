@@ -1,9 +1,9 @@
 {
   "AFIRME": {
-    "protocol": "REST",
     "token": "",
-    "URL": "https://www.afirmeseguros.com/gateway/catalogs",
+    "protocol": "REST",
     "authentication": "Bearer",
+    "URL": "https://www.afirmeseguros.com/gateway/catalogs",
     "endpoints": {
       "versions": {
         "method": "GET",
@@ -21,17 +21,29 @@
   "ANA": {
     "URL": "https://server.anaseguros.com.mx/ananetws/service.asmx",
     "endpoints": {
+      "models": {
+        "entry": "submarca",
+        "method": "SubMarca",
+        "input": {
+          "Negocio": 2124,
+          "Marca": "id",
+          "Modelo": "year",
+          "Categoria": 100,
+          "Usuario": 19515,
+          "Clave": "G5V3w3RR"
+        }
+      },
       "versions": {
+        "method": "Vehiculo",
         "input": {
           "Negocio": 2124,
           "Marca": "brand",
-          "Submarca": "slug",
+          "Submarca": "model",
           "Modelo": "year",
           "Usuario": 19515,
           "Clave": "G5V3w3RR"
         },
-        "wrapper": "GET_VERSIONS",
-        "entry": ["VehiculoResult", "vehiculo"]
+        "entry": "vehiculo"
       }
     }
   },
@@ -46,9 +58,7 @@
           "usuario": "0695760002",
           "IdTipoVehiculo": "4579"
         },
-        "prefix": "pub",
-        "wrapper": "GET_VERSIONS",
-        "entry": ["", ""]
+        "entry": ""
       }
     }
   },
@@ -56,10 +66,62 @@
     "URL": ""
   },
   "ZURICH": {
-    "URL": ""
+    "authentication": {
+      "username": "pruebasws",
+      "password": "pruebasws"
+    },
+    "endpoints": {
+      "brands": {
+        "URL": "https://uat.ezurich.com.mx:443/ZurichWS/autos/consultaCatalogosAutos/publicService",
+        "entry": "subMarcaAuto",
+        "method": "consultaCatalogoSubMarcaVehiculo",
+        "input": {
+          "agente": "99181",
+          "numRequest": "12",
+          "catalogo": "SUBMA",
+          "tipoVehiculo": "1",
+          "claveMarca": "brand",
+          "usuario": "pruebasws",
+          "numRelacion": "8701022"
+        }
+      },
+      "versions": {
+        "URL": "https://uat.ezurich.com.mx:443/ZurichWS/autos/consultaClavesVehiculos/publicService",
+        "entry": "",
+        "method": "ConsultaClavesZurich",
+        "input": {
+          "numRequest": "14",
+          "catalogo": "CAUTO",
+          "tipoVehiculo": "1",
+          "marca": "brand",
+          "submarca": "subbrand",
+          "modelo": "model",
+          "numRelacion": "8701022",
+          "usuario": "pruebasws",
+          "agente": "99181"
+        }
+      }
+    }
   },
   "QUALITAS": {
-    "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx"
+    "endpoints": {
+      "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
+      "versions": {
+        "filter": {
+          "type": "EQUAL",
+          "by": "ctipo"
+        },
+        "entry": "elemento",
+        "method": "listaTarifas",
+        "input": {
+          "cUsuario": "LINEA",
+          "cTarifa": "LINEA",
+          "cCategoria": "100",
+          "cModelo": "year",
+          "cMarca": "brand"
+        }
+      }
+    }
   },
   "PRIMERO": {
     "URL": "http://www.primeroseguros.com/webservices/cotizador"

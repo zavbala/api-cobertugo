@@ -1,11 +1,14 @@
-from fastapi import APIRouter, HTTPException
-import httpx
 import json
-from bs4 import BeautifulSoup
-from app.resources import strings, utils
-from pydantic import BaseModel
-import pandas
 
+import httpx
+import pandas
+from fastapi import APIRouter, HTTPException
+from lxml import etree
+from pydantic import BaseModel
+from zeep import Client
+from zeep.wsse.username import UsernameToken
+
+from app.resources import strings, utils
 
 with open("data/Tree.json", "r") as file:
     plain = file.read()
@@ -30,37 +33,7 @@ async def get_models(body: ProviderData):
         raise HTTPException(status_code=404, detail=f"Provider {file_name} not found")
 
     provider = data[body.provider]
-    endpoint = provider["endpoints"]["versions"]
-
-    # provider_frame = pandas.read_csv(f"data/{file_name}.csv", index_col=0)
-    # query = provider_frame.loc[provider_frame["brand"] == body.brand]
-
-    # brand_id = query.index[0]
-    # wrapper_string = file_name + "_" + provider["wrapper"]
-
-    # payload = utils.create_xml_body(
-    #     strings.HDI_GET_VERSIONS,
-    #     {
-    #         "IdMarca": 3578,
-    #         "IdModelo": 2019,
-    #         "IdTipo": "AVEO",
-    #         "IdTipoVehiculo": 4579,
-    #         "usuario": "0695760002",
-    #     },
-    #     prefix="pub",
-    # )
-
-    # payload = utils.create_xml_body(
-    #     strings.ANA_GET_VERSIONS,
-    #     {
-    #         "Negocio": 2124,
-    #         "Marca": body.brand,
-    #         "Submarca": body.model,
-    #         "Modelo": body.year,
-    #         "Usuario": 19515,
-    #         "Clave": "G5V3w3RR",
-    #     },
-    # )
+    endpoints = provider["endpoints"]
 
     try:
         protocol = provider["protocol"]
@@ -68,47 +41,97 @@ async def get_models(body: ProviderData):
         protocol = "SOAP"
 
     if protocol == "REST":
-        response = await httpx.get(
-            provider["URL"] + endpoint["path"],
-            json={"year": body.year, "typeID": "1", "brandID": "1006"},
-            headers={
-                "Content-Type": strings.CONTENT_TYPE_JSON,
-                "Authorization": f"Bearer {provider['token']}",
-            },
-        )
+        response = httpx.get("https://example.com")
+        return response.text
 
-        print(response.text)
+    # URL = provider["URL"] + "?WSDL"
+    # client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
 
-        output = response.json()
+    # print(payload)
+    # print(URL)
 
-        if endpoint["kind"] == "PIPE":
-            return [
-                item if item.split(" ").count("AVEO") else None
-                for item in output["data"]
-            ]
+    brand = None
 
-    # response = httpx.post(
-    #     data=payload,
-    #     url=provider["URL"],
-    #     headers={"Content-Type": strings.CONTENT_TYPE_XML},
-    # )
+    if "brands" in endpoints:
+        action = endpoints["brands"]
+        payload = utils.resolve_my_keys(action["input"], **body.model_dump())
 
-    # soup = BeautifulSoup(response.text, "xml")
-    # entry, item = endpoint["entry"]
+        URL = action["URL"] + "?WSDL"
+        client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
 
-    # content = soup.find(entry).text
-    # content = BeautifulSoup(content, "xml")
-    # items = content.find_all(item)
+        get_brands = client.service[action["method"]](**payload)
+        deserialized = utils.zeep_to_dict(get_brands, "subMarcaAuto")
 
-    # output = []
+        for child in deserialized:
+            if child["descripcion"] == body.model:
+                brand = child["claveSubMarcaAuto"]
 
-    # for item in items:
-    #     output.append({"name": item.text, "id": item["clave"]})
+    action = endpoints["versions"]
 
-    # return {
-    #     "year": body.year,
-    #     "variants": output,
-    #     "model": body.model,
-    #     "brand": body.brand,
-    #     "provider": body.provider,
-    # }
+    method = action["method"]
+    URL = action["URL"] + "?WSDL"
+    client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
+
+    # payload = utils.resolve_my_keys(action["input"], **body.model_dump())
+
+    print(URL)
+    print(method)
+
+    payload = {
+        "numRequest": "14",
+        "catalogo": "CAUTO",
+        "tipoVehiculo": "1",
+        "marca": body.brand,
+        "submarca": brand,
+        "modelo": body.year,
+        "numRelacion": "8701022",
+        "usuario": "pruebasws",
+        "agente": "99181",
+    }
+
+    print(payload)
+
+    response = client.service[method](**payload)
+
+    print(response)
+
+    return "ALv"
+    # print(type(response))
+
+    if type(response) == str:
+        _xml_ = response.split("?>", 1)[1]
+        response = etree.fromstring(_xml_)
+
+    soup = utils.parse_zeep(response)
+
+    elements = []
+
+    for item in soup.find_all(action["entry"]):
+        computed = {}
+
+        for child in item.contents:
+            # Define key - value pairs
+            computed[child.name or "slug"] = child.text
+
+        elements.append(computed)
+
+    output = []
+
+    if "filter" in action:
+        _filter_ = action["filter"]
+
+        # Filter by pipe, check if model match into description
+        if _filter_["type"] == "PIPE":
+            for item in elements:
+                if item[_filter_["by"]].split(" ").count(body.model) > 0:
+                    output.append(item)
+
+        # Filter by equal, check if model is equal to value
+        if _filter_["type"] == "EQUAL":
+            for item in elements:
+                if item[_filter_["by"]] == body.model:
+                    output.append(item)
+
+        elements = output
+
+    return elements

@@ -1,9 +1,12 @@
 import json
+import os
 
-import httpx
 import pandas
 from bs4 import BeautifulSoup
 from fastapi import APIRouter, Depends, HTTPException, status
+from lxml import etree
+from zeep import Client
+from uuid import uuid4
 
 from app.resources import strings, utils
 
@@ -16,49 +19,49 @@ router = APIRouter()
 
 @router.get("")
 async def get_brands():
-    data_frame = pandas.read_csv("data/ANA.csv", index_col=0)
+    frames = []
+    csv_files = [file for file in os.listdir("./data") if file.endswith(".csv")]
 
-    return data_frame.to_dict(orient="records")
+    for file in csv_files:
+        path = os.path.join("./data", file)
+        print(path)
+
+        if file == "QUALITAS.csv":
+            continue
+
+        data_frame = pandas.read_csv(path, index_col=0)
+        frames.append(data_frame)
+
+    merged = pandas.concat(frames)
+    brands = merged.to_dict(orient="records")
+
+    return brands
 
 
 @router.get("/{id}/models")
 async def get_models(id: str, year: int):
     provider = data["ANA"]
-    URL = provider["URL"]
 
-    payload = utils.create_xml_body(
-        strings.GET_MODELS,
-        data={
-            "Negocio": 2124,
-            "Marca": id,
-            "Modelo": year,
-            "Categoria": 100,
-            "Usuario": 19515,
-            "Clave": "G5V3w3RR",
-        },
-    )
+    action = provider["endpoints"]["models"]
+    URL = provider["URL"] + "?WSDL"
 
-    response = httpx.post(
-        URL,
-        headers={
-            "Content-Type": "text/xml; charset=utf-8",
-        },
-        data=payload,
-    )
+    client = Client(URL)
 
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail=response.text)
+    payload = {
+        **action["input"],
+        "Marca": id,
+        "Modelo": year,
+    }
 
-    soup = BeautifulSoup(response.text, "xml")
+    response = client.service["SubMarca"](**payload)
 
-    content = soup.find("SubMarcaResult").text
-    content = BeautifulSoup(content, "xml")
-
-    items = content.find_all("submarca")
+    _xml_ = response.split("?>", 1)[1]
+    response = etree.fromstring(_xml_)
+    soup = utils.zeep_to_bs4(response)
 
     output = []
 
-    for item in items:
+    for item in soup.find_all("submarca"):
         output.append({"name": item.text, "id": item["clave"]})
 
     return output

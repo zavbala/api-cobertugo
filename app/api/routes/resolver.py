@@ -46,16 +46,16 @@ async def resolve(body: Body):
     #     if item["description"].split(" ").count(body.variant) > 0:
     #         output.append({"name": item["description"], "id": item["id"]})
 
-    provider = providers["HDI"]
+    provider = providers["ANA"]
     URL = provider["URL"] + "?WSDL"
     client = Client(URL)
 
     # response = client.service.Marca(2124, 335, "001", 19515, "G5V3w3Rr")
-    # response = client.service.Vehiculo(2124, "CH", "035", 2019, 19515, "G5V3w3RR")
+    response = client.service["Vehiculo"](2124, "CH", "035", 2019, 19515, "G5V3w3RR")
 
-    response = client.service.ObtenerMarcas("0695760002", 4579, 2019)
+    # response = client.service.ObtenerMarcas("0695760002", 4579, 2019)
 
-    print(type(response.status_code))
+    # print(type(response.status_code))
 
     soup = BeautifulSoup(response, "xml")
     print(soup.prettify())
