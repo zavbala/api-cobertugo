@@ -1,33 +1,70 @@
 {
   "AFIRME": {
     "protocol": "REST",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTMwNzMzMTQsInVzZXJfbmFtZSI6IkdBUkZJT0BDRU5DRVJSTy5DT00iLCJhdXRob3JpdGllcyI6WyJVU1IiXSwianRpIjoiNTI1MWZhYTUtMTM0ZC00NDEwLTk4YTUtYTZmZTdjNTJhMmNhIiwiY2xpZW50X2lkIjoiUG9ydGFsQWdlbnRlcyIsInNjb3BlIjpbInJlYWQiLCIgd3JpdGUiXX0.8IULeX8zcOc6j34AGizyvT004363Gnk6ZX373hTrPec",
+    "token": "",
     "URL": "https://www.afirmeseguros.com/gateway/catalogs",
-    "authentication": "bearer",
-    "entry": "data",
+    "authentication": "Bearer",
     "endpoints": {
-      "models": {
+      "versions": {
         "method": "GET",
-        "URL": "/vehicles/models",
-        "params": {
+        "path": "/vehicles/models",
+        "schema": {
           "year": null,
           "typeID": "1",
           "brandID": null
-        }
+        },
+        "entry": "data",
+        "kind": "PIPE"
       }
     }
   },
-  "ANA_SEGUROS": {
-    "protocol": "SOAP",
-    "url": "https://server.anaseguros.com.mx/ananetws/service.asmx",
-    "base": {
-      "": ""
+  "ANA": {
+    "URL": "https://server.anaseguros.com.mx/ananetws/service.asmx",
+    "endpoints": {
+      "versions": {
+        "input": {
+          "Negocio": 2124,
+          "Marca": "brand",
+          "Submarca": "slug",
+          "Modelo": "year",
+          "Usuario": 19515,
+          "Clave": "G5V3w3RR"
+        },
+        "wrapper": "GET_VERSIONS",
+        "entry": ["VehiculoResult", "vehiculo"]
+      }
     }
   },
   "HDI": {
-    "protocol": "SOAP",
-    "url": "https://enterpriseservices.implementation.hdi.com.mx/B2B/Partners/WCF/Autos",
-    "authentication": ""
+    "URL": "https://enterpriseservices.implementation.hdi.com.mx/B2B/Partners/WCF/Autos/PublicServicesAutos.svc",
+    "endpoints": {
+      "versions": {
+        "input": {
+          "IdTipo": "slug",
+          "IdMarca": "brand",
+          "IdModelo": "year",
+          "usuario": "0695760002",
+          "IdTipoVehiculo": "4579"
+        },
+        "prefix": "pub",
+        "wrapper": "GET_VERSIONS",
+        "entry": ["", ""]
+      }
+    }
   },
-  "GNP": {}
+  "GNP": {
+    "URL": ""
+  },
+  "ZURICH": {
+    "URL": ""
+  },
+  "QUALITAS": {
+    "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx"
+  },
+  "PRIMERO": {
+    "URL": "http://www.primeroseguros.com/webservices/cotizador"
+  },
+  "CHUBB": {
+    "URL": "https://www5.abaseguros.com/AutoConnect/ACCotizacion.svc"
+  }
 }

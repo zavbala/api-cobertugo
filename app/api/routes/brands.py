@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-import httpx
 import json
-from bs4 import BeautifulSoup
+
+import httpx
 import pandas
+from bs4 import BeautifulSoup
+from fastapi import APIRouter, Depends, HTTPException, status
+
 from app.resources import strings, utils
 
 with open("data/Tree.json", "r") as file:
@@ -14,15 +16,15 @@ router = APIRouter()
 
 @router.get("")
 async def get_brands():
-    data_frame = pandas.read_csv("data/ANA_SEGUROS.csv", index_col=0)
+    data_frame = pandas.read_csv("data/ANA.csv", index_col=0)
 
     return data_frame.to_dict(orient="records")
 
 
 @router.get("/{id}/models")
 async def get_models(id: str, year: int):
-    provider = data["ANA_SEGUROS"]
-    url = provider["url"]
+    provider = data["ANA"]
+    URL = provider["URL"]
 
     payload = utils.create_xml_body(
         strings.GET_MODELS,
@@ -37,7 +39,7 @@ async def get_models(id: str, year: int):
     )
 
     response = httpx.post(
-        url,
+        URL,
         headers={
             "Content-Type": "text/xml; charset=utf-8",
         },
