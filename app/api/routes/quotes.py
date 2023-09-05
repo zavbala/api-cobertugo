@@ -10,7 +10,6 @@ from app.resources import strings, utils
 from glom import glom
 
 
-
 router = APIRouter()
 
 
@@ -38,7 +37,8 @@ async def get_quotes(body: Body):
     action = provider["endpoints"]["quotas"]
 
     if provider != "ANA":
-        body.brand = utils.resolve_brand(body.brand, body.provider)
+        brand_id, brand_name = utils.resolve_brand(body.brand, body.provider)
+        body.brand = brand_id
 
     try:
         protocol = provider["protocol"]
@@ -82,14 +82,15 @@ async def get_quotes(body: Body):
 
             for sample in output:
                 numbers = glom(sample, base)
-                details =[glom(item, items["schema"]) for item in sample["coverageList"]]
+                details = [
+                    glom(item, items["schema"]) for item in sample["coverageList"]
+                ]
 
-                _dict_ = {**numbers,"details": details}
+                _dict_ = {**numbers, "details": details}
 
                 return _dict_
 
                 output.append(_dict_)
-
 
         return output
 

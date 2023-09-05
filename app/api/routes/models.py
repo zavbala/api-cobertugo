@@ -8,6 +8,7 @@ from typing import Optional
 from zeep import Client
 from zeep.wsse.username import UsernameToken
 from glom import glom
+from lxml import etree
 
 from app.resources import strings, utils
 
@@ -46,9 +47,19 @@ async def get_models(body: ProviderData):
     elements, output = [], []
     action, credentials = None, None
 
-    # Calculate brand ID from provider
     if provider != "ANA":
-        dict_body["brand"] = utils.resolve_brand(body.brand, body.provider)
+        provider_uses_long_brand = "usingLongBrand" in provider
+
+        id, brand_name = utils.resolve_brand(
+            body.brand, "ANA" if provider_uses_long_brand else body.provider
+        )
+
+        if provider_uses_long_brand:
+            dict_body["brand"] = brand_name
+        else:
+            dict_body["brand"] = id
+
+    print(body)
 
     if protocol == "REST":
         action = endpoints["versions"]
@@ -76,8 +87,6 @@ async def get_models(body: ProviderData):
             elements = [glom(item, struct) for item in elements]
 
     if protocol == "SOAP":
-        is_xml = False
-
         if "authentication" in provider:
             credentials = list(provider["authentication"].values())
 
@@ -108,20 +117,25 @@ async def get_models(body: ProviderData):
             base = action["URL"]
 
         URL = base + "?WSDL"
+
         client = Client(URL, wsse=UsernameToken(*credentials) if credentials else None)
         keys = utils.resolve_my_keys(action["input"], **dict_body)
 
         base_payload = provider["constants"] if "constants" in provider else {}
+
         payload = {**keys, **base_payload}
         response = client.service[method](**payload)
 
+        # print(response)
+        # print(type(response))
+
         if type(response) == str or isinstance(response, _Element):
-            is_xml = True
+            if isinstance(response, _Element):
+                response = etree.tostring(response, encoding="unicode")
 
-            if type(response) == str:
-                response = response.split("?>", 1)[1]
-
-            response = utils.zeep_to_bs4(response)
+            elements = utils.resolve_parsel_schema(
+                action["struct"], response, action["entry"]
+            )
 
         else:
             elements = utils.zeep_to_dict(response, action["entry"] or None)
@@ -129,31 +143,6 @@ async def get_models(body: ProviderData):
             if "struct" in action:
                 struct = action["struct"]
                 elements = [glom(item, struct) for item in elements]
-
-        # print(response)
-        # return "ALV"
-
-        # if is_xml:
-
-        #     for item in response.find_all(action["entry"]):
-
-        #         # zurich
-        #         computed = {
-        #                 "id": item["clave"],
-        #                 "version": item.text.strip(),
-        #             }
-
-        #         elements.append(computed)
-
-        if is_xml:
-            for item in response.find_all(action["entry"]):
-                print(item)
-                computed = {
-                    "id": item.select_one("ctarifa").text.strip(),
-                    "version": item.select_one("cversion").text.strip(),
-                }
-
-                elements.append(computed)
 
     if "filter" in action:
         _filter_ = action["filter"]

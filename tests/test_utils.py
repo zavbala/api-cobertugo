@@ -2,7 +2,12 @@ import pytest
 from app.resources import utils
 
 
-samples = [("CH", "ZURICH", "16"), ("CH", "HDI", "3578"), ("CH", "AFIRME", "1006")]
+samples = [
+    ("CH", "HDI", ["3578", "CHEVROLET"]),
+    ("CH", "ZURICH", ["16", "CHEVROLET"]),
+    ("CH", "AFIRME", ["1006", "CHEVROLET"]),
+    ("CH", "QUALITAS", ["CH", "CHEVROLET"]),
+]
 
 
 @pytest.mark.parametrize("brand,provider,expected", samples)
@@ -27,16 +32,13 @@ dicts = [
             "brand": "CH",
             "model": "16",
         },
-
     ),
     (
         {
             "parent": {
                 "year": "year",
             },
-            "cousin": {
-                "model": "model"
-            }
+            "cousin": {"model": "model"},
         },
         {
             "year": 2020,
@@ -46,13 +48,11 @@ dicts = [
             "parent": {
                 "year": 2020,
             },
-            "cousin": {
-                "model": "16"
-            }
+            "cousin": {"model": "16"},
         },
-
-    )
+    ),
 ]
+
 
 @pytest.mark.parametrize("dict,schema,expected", dicts)
 def test_resolve_my_keys(dict, schema, expected):

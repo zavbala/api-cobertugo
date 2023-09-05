@@ -95,6 +95,10 @@
           "Marca": "brand",
           "Modelo": "year",
           "Submarca": "model"
+        },
+        "struct": {
+          "id": "::attr(clave)",
+          "version": "::text"
         }
       },
       "quotas": {
@@ -207,6 +211,7 @@
     }
   },
   "QUALITAS": {
+    "usingLongBrand": true,
     "endpoints": {
       "versions": {
         "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
@@ -222,6 +227,10 @@
         "filter": {
           "type": "EQUAL",
           "by": "ctipo"
+        },
+        "struct": {
+          "id": "ctarifa::text",
+          "version": "cversion::text"
         }
       },
       "quotas": {

@@ -1,12 +1,28 @@
+import json
 import xml.dom.minidom
+from typing import Union
 
 import pandas
 from bs4 import BeautifulSoup
-from lxml import etree
-from zeep.helpers import serialize_object
 from glom import glom
-import json
-from typing import Union
+from lxml import etree
+from parsel import Selector
+from zeep.helpers import serialize_object
+
+
+def resolve_parsel_schema(schema: dict, text: str, selector: str):
+    output = []
+    parsel = Selector(text)
+
+    for item in parsel.css(selector):
+        __dict__ = {}
+
+        for key, value in schema.items():
+            __dict__[key] = item.css(value).get()
+
+        output.append(__dict__)
+
+    return output
 
 
 def create_xml_body(wrapper: str, data: dict, prefix: str = None):
@@ -41,14 +57,13 @@ def resolve_my_keys(schema: dict, **kwargs):
 
 
 def zeep_to_bs4(response):
-
     flag, string = False, None
 
     if type(response) != str:
         flag = True
         string = etree.tostring(response, encoding="unicode")
 
-    return BeautifulSoup(string if flag else response  , "lxml")
+    return BeautifulSoup(string if flag else response, "lxml")
 
 
 def zeep_to_dict(response, get_key: str = None):
@@ -70,12 +85,16 @@ def resolve_brand(value: str, provider: str):
     provider_source = provider.upper()
     data_frame = pandas.read_csv(f"data/{provider_source}.csv", index_col=1)
 
-    _id_ = data_frame.loc[brand]["id"]
+    __id__ = data_frame.loc[brand]["id"]
 
-    return str(_id_)
+    return [str(__id__), brand]
 
-def create_pricing_plan(data: dict, provider:str):
 
+def create_pricing_plan(data: dict, provider: str):
     with open("data/Tree.json", "r") as file:
         plain = file.read()
         data = json.loads(plain)
+
+
+def filter_by_slug():
+    pass
