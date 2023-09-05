@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from lxml import etree
 from zeep import Client
 from uuid import uuid4
+from app.resources import strings, utils
 
 from app.resources import strings, utils
 
@@ -19,21 +20,9 @@ router = APIRouter()
 
 @router.get("")
 async def get_brands():
-    frames = []
-    csv_files = [file for file in os.listdir("./data") if file.endswith(".csv")]
 
-    for file in csv_files:
-        path = os.path.join("./data", file)
-        print(path)
-
-        if file == "QUALITAS.csv":
-            continue
-
-        data_frame = pandas.read_csv(path, index_col=0)
-        frames.append(data_frame)
-
-    merged = pandas.concat(frames)
-    brands = merged.to_dict(orient="records")
+    frame = pandas.read_csv("data/ANA.csv")
+    brands = frame.to_dict(orient="records")
 
     return brands
 
@@ -41,16 +30,16 @@ async def get_brands():
 @router.get("/{id}/models")
 async def get_models(id: str, year: int):
     provider = data["ANA"]
-
     action = provider["endpoints"]["models"]
-    URL = provider["URL"] + "?WSDL"
 
+    URL = provider["URL"] + "?WSDL"
     client = Client(URL)
 
     payload = {
-        **action["input"],
         "Marca": id,
         "Modelo": year,
+        "Categoria": 100,
+        **provider["constants"],
     }
 
     response = client.service["SubMarca"](**payload)
@@ -62,6 +51,6 @@ async def get_models(id: str, year: int):
     output = []
 
     for item in soup.find_all("submarca"):
-        output.append({"name": item.text, "id": item["clave"]})
+        output.append({"slug": item.text, "id": item["clave"]})
 
     return output

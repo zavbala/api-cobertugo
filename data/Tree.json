@@ -1,49 +1,111 @@
 {
   "AFIRME": {
-    "token": "",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTQxOTExODcsInVzZXJfbmFtZSI6IkdBUkZJT0BDRU5DRVJSTy5DT00iLCJhdXRob3JpdGllcyI6WyJVU1IiXSwianRpIjoiNjIxZGEzMWUtYmVlNC00NzMyLTgzMjQtYjQxYzA3OTViNGRiIiwiY2xpZW50X2lkIjoiUG9ydGFsQWdlbnRlcyIsInNjb3BlIjpbInJlYWQiLCIgd3JpdGUiXX0.QJBSUBu5Hu1RMjmkIs8os2TJ2zPegB2NbXowTlgKfR4",
     "protocol": "REST",
     "authentication": "Bearer",
-    "URL": "https://www.afirmeseguros.com/gateway/catalogs",
+    "URL": "https://www.afirmeseguros.com/gateway",
     "endpoints": {
       "versions": {
-        "method": "GET",
-        "path": "/vehicles/models",
-        "schema": {
-          "year": null,
-          "typeID": "1",
-          "brandID": null
-        },
         "entry": "data",
-        "kind": "PIPE"
+        "method": "GET",
+        "path": "/catalogs/vehicles/models",
+        "schema": {
+          "typeID": "1",
+          "year": "year",
+          "brandID": "brand"
+        },
+        "filter": {
+          "type": "PIPE",
+          "by": "description"
+        },
+        "struct": {
+          "id": "id",
+          "version": "description"
+        }
+      },
+      "quotas": {
+        "entry": "data",
+        "path": "/quote/saveQuotePolicy",
+        "method": "POST",
+        "multiple": {
+          "list": ["9", "10", "11"],
+          "by": ["packageInfo", "coverageModule"]
+        },
+        "schema": {
+          "dataPolicy": {
+            "agency": 645,
+            "productCode": 632,
+            "effectiveDate": "1725230255"
+          },
+          "driveZone": {
+            "drivingZone": 8,
+            "zipCode": "zip_code"
+          },
+          "vehicle": {
+            "vehicleType": 1,
+            "vehicleCode": 102801,
+            "yearOfManufactured": "year",
+            "useOfVehicle": 112,
+            "typeVehicleValue": 1,
+            "brand": "brand"
+          },
+          "packageInfo": {
+            "coverageModule": 9,
+            "paymentFrequency": 5
+          }
+        },
+        "struct": {
+          "items": {
+            "entry": "coverageList",
+            "schema": {
+              "id": "coverageId",
+              "slug": "description",
+              "percentage": "deductible"
+            }
+          },
+          "base": {
+            "price": "totalPremium",
+            "firstPayment": "firstPayment"
+          }
+        }
       }
     }
   },
   "ANA": {
+    "constants": {
+      "Negocio": 2124,
+      "Usuario": 19515,
+      "Clave": "G5V3w3RR"
+    },
     "URL": "https://server.anaseguros.com.mx/ananetws/service.asmx",
     "endpoints": {
       "models": {
         "entry": "submarca",
         "method": "SubMarca",
         "input": {
-          "Negocio": 2124,
           "Marca": "id",
           "Modelo": "year",
-          "Categoria": 100,
-          "Usuario": 19515,
-          "Clave": "G5V3w3RR"
+          "Categoria": 100
         }
       },
       "versions": {
+        "entry": "vehiculo",
         "method": "Vehiculo",
         "input": {
-          "Negocio": 2124,
           "Marca": "brand",
-          "Submarca": "model",
           "Modelo": "year",
+          "Submarca": "model"
+        }
+      },
+      "quotas": {
+        "entry": "",
+        "method": "Transaccion",
+        "input": {
+          "XML": "",
+          "Tipo": "",
           "Usuario": 19515,
           "Clave": "G5V3w3RR"
-        },
-        "entry": "vehiculo"
+        }
       }
     }
   },
@@ -51,14 +113,14 @@
     "URL": "https://enterpriseservices.implementation.hdi.com.mx/B2B/Partners/WCF/Autos/PublicServicesAutos.svc",
     "endpoints": {
       "versions": {
+        "entry": "",
         "input": {
           "IdTipo": "slug",
           "IdMarca": "brand",
           "IdModelo": "year",
           "usuario": "0695760002",
           "IdTipoVehiculo": "4579"
-        },
-        "entry": ""
+        }
       }
     }
   },
@@ -87,30 +149,67 @@
       },
       "versions": {
         "URL": "https://uat.ezurich.com.mx:443/ZurichWS/autos/consultaClavesVehiculos/publicService",
-        "entry": "",
+        "entry": "claveZurich",
         "method": "ConsultaClavesZurich",
         "input": {
           "numRequest": "14",
           "catalogo": "CAUTO",
           "tipoVehiculo": "1",
           "marca": "brand",
+          "modelo": "year",
           "submarca": "subbrand",
-          "modelo": "model",
           "numRelacion": "8701022",
           "usuario": "pruebasws",
           "agente": "99181"
+        },
+        "struct": {
+          "id": "clave",
+          "version": "descripcion"
+        }
+      },
+      "quotas": {
+        "URL": "https://uat.ezurich.com.mx/ZurichWS/autos/solCotV2/publicService",
+        "entry": "PAQUETE",
+        "method": "getSolicitudCotizacionAutos",
+        "input": {
+          "num_req": "8",
+          "usuario": "pruebasws",
+          "idOficina": "10",
+          "programaComercial": "8701022",
+          "tipoVehiculo": "1",
+          "cve_zurich": "016C6664",
+          "modelo": "year",
+          "id_estado": "area",
+          "id_ciudad": "locality",
+          "id_tipoValor": "7",
+          "id_tipoUso": "1",
+          "cve_agente": "99181",
+          "tipo_producto": "0",
+          "tipo_carga": "0",
+          "tipo_persona": "F",
+          "edad": "age",
+          "genero": "N",
+          "estadoCivil": "7",
+          "ocupacion": "1",
+          "giro": "1",
+          "nacionalidad": "0",
+          "id_moneda": "0",
+          "fecha_inicio": "20230901",
+          "fecha_fin": "20240901",
+          "monto_asegurado": "394900",
+          "codigoPostal": "zip_code",
+          "situacionVehiculo": "",
+          "mesesVigencia": "12",
+          "tipoMovimiento": "1",
+          "polizaAnterior": "0"
         }
       }
     }
   },
   "QUALITAS": {
     "endpoints": {
-      "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
       "versions": {
-        "filter": {
-          "type": "EQUAL",
-          "by": "ctipo"
-        },
+        "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
         "entry": "elemento",
         "method": "listaTarifas",
         "input": {
@@ -119,6 +218,18 @@
           "cCategoria": "100",
           "cModelo": "year",
           "cMarca": "brand"
+        },
+        "filter": {
+          "type": "EQUAL",
+          "by": "ctipo"
+        }
+      },
+      "quotas": {
+        "URL": "https://qa.qualitas.com.mx:8443/WsEmision/WsEmision.asmx",
+        "entry": "",
+        "method": "obtenerNuevaEmision",
+        "input": {
+          "xmlEmision": ""
         }
       }
     }

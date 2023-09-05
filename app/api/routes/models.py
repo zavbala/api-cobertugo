@@ -1,12 +1,13 @@
 import json
 
 import httpx
-import pandas
 from fastapi import APIRouter, HTTPException
-from lxml import etree
+from lxml.etree import _Element
 from pydantic import BaseModel
+from typing import Optional
 from zeep import Client
 from zeep.wsse.username import UsernameToken
+from glom import glom
 
 from app.resources import strings, utils
 
@@ -22,11 +23,13 @@ class ProviderData(BaseModel):
     brand: str
     model: str
     provider: str
+    slug: Optional[str]
 
 
 @router.post("")
 async def get_models(body: ProviderData):
     providers = data.keys()
+    dict_body = body.model_dump()
     file_name = body.provider.upper()
 
     if body.provider not in providers:
@@ -40,82 +43,117 @@ async def get_models(body: ProviderData):
     except KeyError:
         protocol = "SOAP"
 
+    elements, output = [], []
+    action, credentials = None, None
+
+    # Calculate brand ID from provider
+    if provider != "ANA":
+        dict_body["brand"] = utils.resolve_brand(body.brand, body.provider)
+
     if protocol == "REST":
-        response = httpx.get("https://example.com")
-        return response.text
+        action = endpoints["versions"]
+        URL = provider["URL"] + action["path"]
 
-    # URL = provider["URL"] + "?WSDL"
-    # client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
+        if "authentication" in provider:
+            credentials = f"Bearer {provider['token']}"
 
-    # print(payload)
-    # print(URL)
+        payload = utils.resolve_my_keys(action["schema"], **dict_body)
 
-    brand = None
+        response = httpx.get(
+            URL,
+            params=payload,
+            headers={
+                "Authorization": credentials,
+                "Content-Type": strings.CONTENT_TYPE_JSON,
+            },
+        )
 
-    if "brands" in endpoints:
-        action = endpoints["brands"]
-        payload = utils.resolve_my_keys(action["input"], **body.model_dump())
+        entry = action["entry"]
+        elements = response.json()[entry]
 
-        URL = action["URL"] + "?WSDL"
-        client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
+        if "struct" in action:
+            struct = action["struct"]
+            elements = [glom(item, struct) for item in elements]
 
-        get_brands = client.service[action["method"]](**payload)
-        deserialized = utils.zeep_to_dict(get_brands, "subMarcaAuto")
+    if protocol == "SOAP":
+        is_xml = False
 
-        for child in deserialized:
-            if child["descripcion"] == body.model:
-                brand = child["claveSubMarcaAuto"]
+        if "authentication" in provider:
+            credentials = list(provider["authentication"].values())
 
-    action = endpoints["versions"]
+        # Provider needs compute ...
+        if "brands" in endpoints:
+            action = endpoints["brands"]
+            payload = utils.resolve_my_keys(action["input"], **dict_body)
 
-    method = action["method"]
-    URL = action["URL"] + "?WSDL"
-    client = Client(URL, wsse=UsernameToken("pruebasws", "pruebasws"))
+            URL = action["URL"] + "?WSDL"
 
-    # payload = utils.resolve_my_keys(action["input"], **body.model_dump())
+            client = Client(
+                URL, wsse=UsernameToken(*credentials) if credentials else None
+            )
 
-    print(URL)
-    print(method)
+            get_brands = client.service[action["method"]](**payload)
+            deserialized = utils.zeep_to_dict(get_brands, "subMarcaAuto")
 
-    payload = {
-        "numRequest": "14",
-        "catalogo": "CAUTO",
-        "tipoVehiculo": "1",
-        "marca": body.brand,
-        "submarca": brand,
-        "modelo": body.year,
-        "numRelacion": "8701022",
-        "usuario": "pruebasws",
-        "agente": "99181",
-    }
+            for child in deserialized:
+                if child["descripcion"] == body.slug:
+                    dict_body["subbrand"] = child["claveSubMarcaAuto"]
 
-    print(payload)
+        action = endpoints["versions"]
+        method = action["method"]
 
-    response = client.service[method](**payload)
+        if "URL" in provider:
+            base = provider["URL"]
+        else:
+            base = action["URL"]
 
-    print(response)
+        URL = base + "?WSDL"
+        client = Client(URL, wsse=UsernameToken(*credentials) if credentials else None)
+        keys = utils.resolve_my_keys(action["input"], **dict_body)
 
-    return "ALv"
-    # print(type(response))
+        base_payload = provider["constants"] if "constants" in provider else {}
+        payload = {**keys, **base_payload}
+        response = client.service[method](**payload)
 
-    if type(response) == str:
-        _xml_ = response.split("?>", 1)[1]
-        response = etree.fromstring(_xml_)
+        if type(response) == str or isinstance(response, _Element):
+            is_xml = True
 
-    soup = utils.parse_zeep(response)
+            if type(response) == str:
+                response = response.split("?>", 1)[1]
 
-    elements = []
+            response = utils.zeep_to_bs4(response)
 
-    for item in soup.find_all(action["entry"]):
-        computed = {}
+        else:
+            elements = utils.zeep_to_dict(response, action["entry"] or None)
 
-        for child in item.contents:
-            # Define key - value pairs
-            computed[child.name or "slug"] = child.text
+            if "struct" in action:
+                struct = action["struct"]
+                elements = [glom(item, struct) for item in elements]
 
-        elements.append(computed)
+        # print(response)
+        # return "ALV"
 
-    output = []
+        # if is_xml:
+
+        #     for item in response.find_all(action["entry"]):
+
+        #         # zurich
+        #         computed = {
+        #                 "id": item["clave"],
+        #                 "version": item.text.strip(),
+        #             }
+
+        #         elements.append(computed)
+
+        if is_xml:
+            for item in response.find_all(action["entry"]):
+                print(item)
+                computed = {
+                    "id": item.select_one("ctarifa").text.strip(),
+                    "version": item.select_one("cversion").text.strip(),
+                }
+
+                elements.append(computed)
 
     if "filter" in action:
         _filter_ = action["filter"]
@@ -123,15 +161,22 @@ async def get_models(body: ProviderData):
         # Filter by pipe, check if model match into description
         if _filter_["type"] == "PIPE":
             for item in elements:
-                if item[_filter_["by"]].split(" ").count(body.model) > 0:
+                if item["version"].split(" ").count(body.slug) > 0:
                     output.append(item)
 
         # Filter by equal, check if model is equal to value
         if _filter_["type"] == "EQUAL":
             for item in elements:
-                if item[_filter_["by"]] == body.model:
+                if item[_filter_["by"]] == body.slug:
                     output.append(item)
 
         elements = output
 
-    return elements
+    return {
+        "year": body.year,
+        "model": body.model,
+        "brand": body.brand,
+        "provider": body.provider,
+        "slug": body.slug,
+        "data": elements,
+    }

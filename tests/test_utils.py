@@ -1,27 +1,59 @@
+import pytest
 from app.resources import utils
 
 
-def test_create_xml_body():
-    wrapper = """<?xml version="1.0" encoding="utf-8"?>
-  <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-    <soap:Body>
-      <Vehiculo xmlns="http://tempuri.org/">
-        {body}
-      </Vehiculo>
-    </soap:Body>
-  </soap:Envelope>
-"""
+samples = [("CH", "ZURICH", "16"), ("CH", "HDI", "3578"), ("CH", "AFIRME", "1006")]
 
-    result = utils.create_xml_body(
-        wrapper,
-        data={
-            "Negocio": 2124,
-            "Marca": "1006",
-            "Submarca": "1006",
-            "Modelo": 2019,
-            "Usuario": 19515,
-            "Clave": "G5V3w3RR",
+
+@pytest.mark.parametrize("brand,provider,expected", samples)
+def test_get_my_brand_from_csv(brand, provider, expected):
+    assert expected == utils.resolve_brand(brand, provider)
+
+
+dicts = [
+    (
+        {
+            "year": "year",
+            "brand": "brand",
+            "model": "model",
         },
-    )
+        {
+            "year": 2020,
+            "brand": "CH",
+            "model": "16",
+        },
+        {
+            "year": 2020,
+            "brand": "CH",
+            "model": "16",
+        },
 
-    print(result)
+    ),
+    (
+        {
+            "parent": {
+                "year": "year",
+            },
+            "cousin": {
+                "model": "model"
+            }
+        },
+        {
+            "year": 2020,
+            "model": "16",
+        },
+        {
+            "parent": {
+                "year": 2020,
+            },
+            "cousin": {
+                "model": "16"
+            }
+        },
+
+    )
+]
+
+@pytest.mark.parametrize("dict,schema,expected", dicts)
+def test_resolve_my_keys(dict, schema, expected):
+    assert expected == utils.resolve_my_keys(dict, **schema)
