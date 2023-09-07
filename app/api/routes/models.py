@@ -1,14 +1,14 @@
 import json
+from typing import Optional
 
 import httpx
 from fastapi import APIRouter, HTTPException
-from lxml.etree import _Element
-from pydantic import BaseModel
-from typing import Optional
-from zeep import Client
-from zeep.wsse.username import UsernameToken
 from glom import glom
 from lxml import etree
+from lxml.etree import _Element
+from pydantic import BaseModel
+from zeep import Client
+from zeep.wsse.username import UsernameToken
 
 from app.resources import strings, utils
 
@@ -48,7 +48,7 @@ async def get_models(body: ProviderData):
     action, credentials = None, None
 
     if provider != "ANA":
-        provider_uses_long_brand = "usingLongBrand" in provider
+        provider_uses_long_brand = ["QUALITAS"].count(body.provider)
 
         id, brand_name = utils.resolve_brand(
             body.brand, "ANA" if provider_uses_long_brand else body.provider
@@ -58,8 +58,6 @@ async def get_models(body: ProviderData):
             dict_body["brand"] = brand_name
         else:
             dict_body["brand"] = id
-
-    print(body)
 
     if protocol == "REST":
         action = endpoints["versions"]
@@ -117,17 +115,18 @@ async def get_models(body: ProviderData):
             base = action["URL"]
 
         URL = base + "?WSDL"
-
         client = Client(URL, wsse=UsernameToken(*credentials) if credentials else None)
-        keys = utils.resolve_my_keys(action["input"], **dict_body)
 
+        keys = utils.resolve_my_keys(action["input"], **dict_body)
         base_payload = provider["constants"] if "constants" in provider else {}
 
         payload = {**keys, **base_payload}
         response = client.service[method](**payload)
 
-        # print(response)
-        # print(type(response))
+        print(response)
+        print(type(response))
+
+        return "OK"
 
         if type(response) == str or isinstance(response, _Element):
             if isinstance(response, _Element):
@@ -144,19 +143,22 @@ async def get_models(body: ProviderData):
                 struct = action["struct"]
                 elements = [glom(item, struct) for item in elements]
 
+        # return elementss
+
     if "filter" in action:
         _filter_ = action["filter"]
 
         # Filter by pipe, check if model match into description
         if _filter_["type"] == "PIPE":
             for item in elements:
-                if item["version"].split(" ").count(body.slug) > 0:
+                if item["version"].split(" ").count(body.slug):
                     output.append(item)
 
         # Filter by equal, check if model is equal to value
         if _filter_["type"] == "EQUAL":
             for item in elements:
                 if item[_filter_["by"]] == body.slug:
+                    del item[_filter_["by"]]
                     output.append(item)
 
         elements = output

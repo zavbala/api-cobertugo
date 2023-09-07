@@ -211,7 +211,6 @@
     }
   },
   "QUALITAS": {
-    "usingLongBrand": true,
     "endpoints": {
       "versions": {
         "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
@@ -230,6 +229,7 @@
         },
         "struct": {
           "id": "ctarifa::text",
+          "ctipo": "ctipo::text",
           "version": "cversion::text"
         }
       },
