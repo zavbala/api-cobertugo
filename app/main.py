@@ -11,7 +11,12 @@ def create_app():
         allow_headers=["*"],
         allow_credentials=True,
         allow_methods=["GET", "POST"],
-        allow_origins=["http://localhost:3000", "https://cobertugo.vercel.app"],
+        allow_origins=[
+            "http://localhost:3000",
+            "https://app.overol.mx",
+            "https://overol.vercel.app",
+            "https://cobertugo.vercel.app",
+        ],
     )
 
     app.include_router(router)
