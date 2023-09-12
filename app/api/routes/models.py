@@ -143,7 +143,7 @@ async def get_models(body: ProviderData):
                 struct = action["struct"]
                 elements = [glom(item, struct) for item in elements]
 
-        # return elementss
+        # return elements
 
     if "filter" in action:
         _filter_ = action["filter"]

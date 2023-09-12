@@ -96,5 +96,9 @@ def create_pricing_plan(data: dict, provider: str):
         data = json.loads(plain)
 
 
-def filter_by_slug():
-    pass
+def define_my_xml_doc(xml_doc: str, **kwargs):
+    for key, value in kwargs.items():
+        replacement = "{ " + key + " }"
+        xml_doc = xml_doc.replace(replacement, str(value))
+
+    return etree.fromstring(xml_doc)

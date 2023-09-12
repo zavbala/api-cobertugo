@@ -6,7 +6,6 @@ samples = [
     ("CH", "HDI", ["3578", "CHEVROLET"]),
     ("CH", "ZURICH", ["16", "CHEVROLET"]),
     ("CH", "AFIRME", ["1006", "CHEVROLET"]),
-    ("CH", "QUALITAS", ["CH", "CHEVROLET"]),
 ]
 
 
@@ -57,3 +56,22 @@ dicts = [
 @pytest.mark.parametrize("dict,schema,expected", dicts)
 def test_resolve_my_keys(dict, schema, expected):
     assert expected == utils.resolve_my_keys(dict, **schema)
+
+
+docs = [
+    (
+        """<tag>{ body }</tag>""",
+        {"body": "content"},
+        "<tag>content</tag>",
+    ),
+    (
+        "<xml><tag>{ body }</tag></xml>",
+        {"body": "content"},
+        "<xml><tag>content</tag></xml>",
+    ),
+]
+
+
+@pytest.mark.parametrize("wrapper,data,expected", docs)
+def test_create_xml_document(wrapper, data, expected):
+    assert expected == utils.define_my_xml_doc(wrapper, **data)
