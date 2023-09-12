@@ -10,6 +10,7 @@ from app.resources import strings, utils
 from glom import glom
 from typing import Optional
 from datetime import datetime, timedelta
+from zeep import xsd
 
 
 router = APIRouter()
@@ -114,14 +115,24 @@ async def get_quotes(body: Body):
     # response = client.service[method](**payload)
 
     if protocol == "SOAP":
+        method = action["method"]
+
+        if "URL" in provider:
+            base = provider["URL"]
+        else:
+            base = action["URL"]
+
+        URL = base + "?WSDL"
+        client = Client(URL)
+
+        today = datetime.now()
+        one_year = today + timedelta(days=365)
+
         if body.provider == "QUALITAS":
             with open(
                 f"docs/{body.provider.upper()}.xml", "r", encoding="UTF-8"
             ) as file:
                 content = file.read()
-
-            today = datetime.now()
-            one_year = today + timedelta(days=365)
 
             payload = {
                 "today": today.strftime("%Y-%m-%d"),
@@ -130,11 +141,47 @@ async def get_quotes(body: Body):
             }
 
             doc = utils.define_my_xml_doc(content, **payload)
-            string = etree.tostring(doc, encoding="unicode", pretty_print=True)
+            # string = etree.tostring(doc, encoding="unicode", pretty_print=True)
 
-            client = Client(action["URL"] + "?WSDL")
-            response = client.service[action["method"]](xmlEmision=string)
+            response = client.service[method](xmlEmision=doc)
 
-            print(response)
+        if body.provider == "ANA":
+            with open(
+                f"docs/{body.provider.upper()}.xml", "r", encoding="UTF-8"
+            ) as file:
+                content = file.read()
 
-            return "ALV"
+            payload = {
+                "today": today.strftime("%d/%m/%Y"),
+                "future": one_year.strftime("%d/%m/%Y"),
+                **body.model_dump(),
+            }
+
+            doc = utils.define_my_xml_doc(content, **payload)
+
+            # print(doc)
+            # print(type(doc))
+            # return "ALV"
+            # data =
+
+            xml = etree.fromstring(doc)
+            # xml = etree.tostring(xml, encoding="unicode", pretty_print=False)
+
+            # print(xml)
+
+            # return "ALV"
+
+            string = xsd.AnyObject(xsd.String(), xml)
+            print(string)
+            print(type(string))
+
+            # return "ALV"
+
+        response = client.service[method](
+            XML=string, Tipo="Cotizacion", Usuario=19515, Clave="x3J1Sj2Y"
+        )
+
+        print(response)
+        print(type(response))
+
+        return "ALV"

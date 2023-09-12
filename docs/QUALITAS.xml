@@ -79,6 +79,7 @@
                 <Prima>0</Prima>
             </Coberturas>
         </DatosVehiculo>
+
         <DatosGenerales>
             <FechaEmision>{ today }</FechaEmision>
             <FechaInicio>{ today }</FechaInicio>
@@ -98,6 +99,7 @@
                 <ValorRegla>Dígito Verificador: 6</ValorRegla>
             </ConsideracionesAdicionalesDG>
         </DatosGenerales>
+
         <Primas>
             <PrimaNeta />
             <Derecho>340</Derecho>

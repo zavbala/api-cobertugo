@@ -1,0 +1,44 @@
+<transacciones xmlns="">
+    <transaccion version="1" tipotransaccion="C" cotizacion="" negocio="2124" tiponegocio="">
+        <vehiculo id="1" amis="C0560003" modelo="{ year }" descripcion="" uso="1" servicio="1"
+            plan="1"
+            motor="" serie="" repuve="" placas="" conductor="" conductorliciencia=""
+            conductorfecnac="" conductorocupacion="" estado="{ area }" poblacion="{ locality }"
+            color="01" dispositivo="" fecdispositivo="" tipocarga="" tipocargadescripcion="">
+            <cobertura id="02" desc="" sa="" tipo="3" ded="5" pma="" />
+            <cobertura id="04" desc="" sa="" tipo="3" ded="10" pma="" />
+            <cobertura id="06" desc="" sa="500000" tipo="" ded="" pma="" />
+            <cobertura id="07" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="08" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="09" desc="" sa="Auto Sustituto" tipo="" ded="" pma="" />
+            <cobertura id="10" desc="" sa="" tipo="B" ded="" pma="" />
+            <cobertura id="13" desc="" sa="2" tipo="" ded="" pma="" />
+            <cobertura id="18" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="23" desc="" sa="500000" tipo="" ded="" pma="" />
+            <cobertura id="24" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="25" desc="" sa="1500000" tipo="" ded="" pma="" />
+            <cobertura id="26" desc="" sa="1500000" tipo="" ded="" pma="" />
+            <cobertura id="27" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="29" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="33" desc="" sa="30000" tipo="" ded="25" pma="" />
+            <cobertura id="34" desc="" sa="3000000" tipo="" ded="" pma="" />
+            <cobertura id="35" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="39" desc="" sa="" tipo="" ded="" pma="" />
+            <cobertura id="40" desc="" sa="" tipo="" ded="50" pma="" />
+        </vehiculo>
+        <asegurado id="" nombre="" paterno="" materno=""
+            calle="" numerointerior=""
+            numeroexterior="" colonia="" poblacion="" estado="{ area }" cp="" pais=""
+            tipopersona="" />
+        <poliza id="" tipo="A" endoso="" fecemision="{ today }" feciniciovig="{ today }"
+            fecterminovig="{ future }" moneda="0" bonificacion="0" formapago="C" agente="19515"
+            tarifacuotas="2301" tarifavalores="2301" tarifaderechos="2301" beneficiario=""
+            politicacancelacion="1" />
+        <prima primaneta="" derecho="" recargo="" impuesto="" primatotal="" comision="" />
+        <recibo id="" feciniciovig="" fecterminovig="" primaneta="" derecho="" recargo=""
+            impuesto="" primatotal="" comision="" cadenaoriginal="" sellodigital="" fecemision=""
+            serie="" folio="" horaemision="" numeroaprobacion="" anoaprobacion=""
+            numseriecertificado="" />
+        <error />
+    </transaccion>
+</transacciones>

@@ -96,9 +96,12 @@ def create_pricing_plan(data: dict, provider: str):
         data = json.loads(plain)
 
 
-def define_my_xml_doc(xml_doc: str, **kwargs):
+def define_my_xml_doc(xml_doc: str, single_line=False, **kwargs):
     for key, value in kwargs.items():
         replacement = "{ " + key + " }"
         xml_doc = xml_doc.replace(replacement, str(value))
 
-    return etree.fromstring(xml_doc)
+    if single_line:
+        xml_doc = "".join(xml_doc.split())
+
+    return xml_doc

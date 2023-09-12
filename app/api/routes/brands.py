@@ -1,26 +1,21 @@
 import json
-import os
 
 import pandas
-from bs4 import BeautifulSoup
 from fastapi import APIRouter, Depends, HTTPException, status
 from lxml import etree
 from zeep import Client
-from uuid import uuid4
-from app.resources import strings, utils
 
 from app.resources import strings, utils
 
-with open("data/Tree.json", "r") as file:
+with open("schemas/ANA.json", "r") as file:
     plain = file.read()
-    data = json.loads(plain)
+    provider = json.loads(plain)
 
 router = APIRouter()
 
 
 @router.get("")
 async def get_brands():
-
     frame = pandas.read_csv("data/ANA.csv")
     brands = frame.to_dict(orient="records")
 
@@ -29,9 +24,6 @@ async def get_brands():
 
 @router.get("/{id}/models")
 async def get_models(id: str, year: int):
-    provider = data["ANA"]
-    action = provider["endpoints"]["models"]
-
     URL = provider["URL"] + "?WSDL"
     client = Client(URL)
 

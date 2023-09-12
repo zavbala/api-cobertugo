@@ -1,5 +1,6 @@
 import pytest
 from app.resources import utils
+from lxml import etree
 
 
 samples = [
@@ -68,6 +69,11 @@ docs = [
         "<xml><tag>{ body }</tag></xml>",
         {"body": "content"},
         "<xml><tag>content</tag></xml>",
+    ),
+    (
+        '<xml><tag attr="{ body }">content</tag></xml>',
+        {"body": "value"},
+        '<xml><tag attr="value">content</tag></xml>',
     ),
 ]
 

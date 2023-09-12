@@ -1,0 +1,33 @@
+{
+  "endpoints": {
+    "versions": {
+      "URL": "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx",
+      "entry": "elemento",
+      "method": "listaTarifas",
+      "input": {
+        "cUsuario": "LINEA",
+        "cTarifa": "LINEA",
+        "cCategoria": "100",
+        "cModelo": "year",
+        "cMarca": "brand"
+      },
+      "filter": {
+        "by": "ctipo",
+        "type": "EQUAL"
+      },
+      "struct": {
+        "id": "ctarifa::text",
+        "ctipo": "ctipo::text",
+        "version": "cversion::text"
+      }
+    },
+    "quotas": {
+      "URL": "https://qa.qualitas.com.mx:8443/WsEmision/WsEmision.asmx",
+      "entry": "",
+      "method": "obtenerNuevaEmision",
+      "input": {
+        "xmlEmision": ""
+      }
+    }
+  }
+}
