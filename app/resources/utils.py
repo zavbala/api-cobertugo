@@ -59,11 +59,11 @@ def resolve_my_keys(schema: dict, **kwargs):
 def zeep_to_bs4(response):
     flag, string = False, None
 
-    if type(response) != str:
-        flag = True
-        string = etree.tostring(response, encoding="unicode")
+    # if type(response) != str:
+    #     flag = True
+    #     string = etree.tostring(response, encoding="unicode")
 
-    return BeautifulSoup(string if flag else response, "lxml")
+    return BeautifulSoup(string if flag else response, "xml")
 
 
 def zeep_to_dict(response, get_key: str = None):
@@ -88,12 +88,6 @@ def resolve_brand(value: str, provider: str):
     __id__ = data_frame.loc[brand]["id"]
 
     return [str(__id__), brand]
-
-
-def create_pricing_plan(data: dict, provider: str):
-    with open("data/Tree.json", "r") as file:
-        plain = file.read()
-        data = json.loads(plain)
 
 
 def define_my_xml_doc(xml_doc: str, single_line=False, **kwargs):
