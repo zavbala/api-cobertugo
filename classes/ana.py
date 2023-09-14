@@ -20,6 +20,8 @@ class Ana(Soap):
         super().__init__(**kwargs)
 
     def get_models(self):
+        output = []
+
         payload = {
             "Categoria": 100,
             "Marca": self.brand,
@@ -30,11 +32,13 @@ class Ana(Soap):
         response = self.call("SubMarca", payload, url=self.URL)
 
         for item in response.find_all("submarca"):
-            self.output.append({"slug": item.text, "id": item["clave"]})
+            output.append({"slug": item.text, "id": item["clave"]})
 
-        return self.output
+        return output
 
     def get_versions(self):
+        output = []
+
         payload = {
             "Marca": self.brand,
             "Modelo": self.year,
@@ -45,9 +49,9 @@ class Ana(Soap):
         response = self.call("Vehiculo", payload, url=self.URL)
 
         for item in response.find_all("vehiculo"):
-            self.output.append({"version": item.text, "id": item["clave"]})
+            output.append({"version": item.text, "id": item["clave"]})
 
-        return self.output
+        return output
 
     def get_quotes(self):
         with open("docs/ANA.xml", "r") as file:

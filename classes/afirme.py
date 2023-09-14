@@ -33,6 +33,7 @@ class Afirme(Rest):
 
     @refresh_token
     def get_versions(self):
+        output = []
         brand_id, _ = utils.resolve_brand(self.brand, "AFIRME")
         payload = {"typeID": "1", "year": self.year, "brandID": brand_id}
         action = self.url + "/catalogs/vehicles/models"
@@ -48,11 +49,11 @@ class Afirme(Rest):
 
         for item in result:
             if item["description"].split(" ").count(self.slug):
-                self.output.append(
+                output.append(
                     {
                         "id": item["id"],
                         "version": item["description"],
                     }
                 )
 
-        return self.output
+        return output

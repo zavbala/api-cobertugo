@@ -1,7 +1,9 @@
-from classes.soap import Soap
-from app.resources import utils
 from datetime import datetime, timedelta
+
 from glom import glom
+
+from app.resources import utils
+from classes.soap import Soap
 
 auth = ("pruebasws", "pruebasws")
 
@@ -26,6 +28,7 @@ class Zurich(Soap):
         super().__init__(**kwargs)
 
     def get_versions(self):
+        output = []
         brand_id, _ = utils.resolve_brand(self.brand, "ZURICH")
         URL = "https://uat.ezurich.com.mx:443/ZurichWS/autos/consultaClavesVehiculos/publicService"
 
@@ -48,14 +51,14 @@ class Zurich(Soap):
         response = self.call("ConsultaClavesZurich", payload, url=URL, credentials=auth)
 
         for item in response["claveZurich"]:
-            self.output.append(
+            output.append(
                 {
                     "id": item["clave"],
                     "version": item["descripcion"],
                 }
             )
 
-        return self.output
+        return output
 
     def get_brands(self):
         brand_id, _ = utils.resolve_brand(self.brand, "ZURICH")
@@ -76,6 +79,7 @@ class Zurich(Soap):
         return response["subMarcaAuto"]
 
     def get_quotes(self):
+        output = []
         URL = "https://uat.ezurich.com.mx/ZurichWS/autos/solCotV2/publicService"
 
         payload = {
@@ -116,9 +120,7 @@ class Zurich(Soap):
         )
 
         for package in response["PAQUETE"]:
-            print(package)
-
-            self.output.append(
+            output.append(
                 {
                     "name": package["descripcion_paquete"],
                     "details": [
@@ -127,4 +129,4 @@ class Zurich(Soap):
                 }
             )
 
-        return self.output
+        return output

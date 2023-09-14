@@ -8,6 +8,7 @@ class Qualitas(Soap):
         super().__init__(**kwargs)
 
     def get_versions(self):
+        output = []
         URL = "http://qbcenter.qualitas.com.mx/wsTarifa/wsTarifa.asmx"
         _, brand_name = utils.resolve_brand(self.brand, "ANA")
 
@@ -23,14 +24,14 @@ class Qualitas(Soap):
 
         for item in response.find_all("Elemento"):
             if item.select_one("cTipo").text.split().count(self.slug):
-                self.output.append(
+                output.append(
                     {
                         "id": item.select_one("cTarifa").text,
                         "version": item.select_one("cVersion").text,
                     }
                 )
 
-        return self.output
+        return output
 
     def get_quotas(self):
         URL = ""
