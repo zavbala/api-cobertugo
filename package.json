@@ -1,0 +1,13 @@
+{
+  "name": "api-cobertugo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write \"**/*.{json,xml}\""
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@prettier/plugin-xml": "^3.2.1",
+    "prettier": "^3.0.3"
+  }
+}

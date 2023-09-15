@@ -2,6 +2,7 @@ from classes.soap import Soap
 from app.resources import strings, utils
 from datetime import datetime, timedelta
 from lxml import etree
+from zeep import xsd, Client
 
 constants = {
     "Negocio": 2124,
@@ -9,8 +10,9 @@ constants = {
     "Clave": "G5V3w3RR",
 }
 
-today = datetime.today().strftime("%Y-%m-%d")
-one_year_later = (datetime.today() + timedelta(days=365)).strftime("%Y-%m-%d")
+format = "%d/%m/%Y"
+today = datetime.today().strftime(format)
+one_year_later = (datetime.today() + timedelta(days=365)).strftime(format)
 
 
 class Ana(Soap):
@@ -63,14 +65,17 @@ class Ana(Soap):
             "future": one_year_later,
         }
 
-        document = utils.define_my_xml_doc(xml, **args)
-        _xml_ = etree.fromstring(document)
+        document = utils.define_my_xml_doc(xml, single_line=True, **args).replace(
+            " />", "/>"
+        )
+
+        value = xsd.AnyObject(xsd.String(), document)
 
         payload = {
-            "XML": _xml_,
-            "Tipo": "Cotizacion",
-            "Clave": "x3J1Sj2Y",
+            "XML": value,
             "Usuario": 19515,
+            "Clave": "x3J1Sj2Y",
+            "Tipo": "Cotizacion",
         }
 
         response = self.call("Transaccion", payload, url=self.URL)

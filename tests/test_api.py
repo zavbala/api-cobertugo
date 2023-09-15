@@ -24,11 +24,11 @@ def test_get_models(brand, year):
     assert len(response.json()) > 0
 
 
-providers = [("CH", 2019, "335", "AVEO")]
+providers = ["AFIRME", "ZURICH"]
 
 
-@pytest.mark.parametrize("brand,year,model,slug", providers)
-def test_get_versions(brand, year, model, slug):
+@pytest.mark.parametrize("provider", providers)
+def test_get_versions(provider):
     payload = {
         "year": year,
         "slug": slug,

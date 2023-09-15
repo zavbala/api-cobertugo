@@ -1,13 +1,17 @@
 from lxml import etree
 from lxml.etree import _Element
-from zeep import Client, AnyObject
+from zeep import AnyObject, Client
+from zeep.exceptions import Fault
+from zeep.plugins import HistoryPlugin
 from zeep.wsse.username import UsernameToken
 
 from app.resources import utils
 
+history = HistoryPlugin()
+
 
 class Soap:
-    output = []
+    MAX_RETRIES = 3
 
     def __init__(
         self,
@@ -39,6 +43,7 @@ class Soap:
 
         return Client(
             URL,
+            plugins=[history],
             wsse=UsernameToken(*credentials) if credentials else None,
         )
 
@@ -47,8 +52,8 @@ class Soap:
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
 
-            # print(result)
-            # print(type(result))
+            print(result)
+            print(type(result))
 
             if type(result) == str or isinstance(result, _Element):
                 if isinstance(result, _Element):
@@ -65,4 +70,19 @@ class Soap:
 
     @parse_response
     def call(self, method: str, payload: dict, **kwargs):
-        return self.client(**kwargs).service[method](**payload)
+        retries = 0
+
+        while retries < self.MAX_RETRIES:
+            try:
+                result = self.client(**kwargs).service[method](**payload)
+                break
+            except Fault as e:
+                retries += 1
+
+        if retries == self.MAX_RETRIES:
+            raise Exception("Max retries reached")
+
+        print(history.last_sent)
+        print(history.last_received)
+
+        return result

@@ -8,6 +8,7 @@ from glom import glom
 from lxml import etree
 from parsel import Selector
 from zeep.helpers import serialize_object
+import xml.dom.minidom
 
 
 def resolve_parsel_schema(schema: dict, text: str, selector: str):
@@ -57,13 +58,7 @@ def resolve_my_keys(schema: dict, **kwargs):
 
 
 def zeep_to_bs4(response):
-    flag, string = False, None
-
-    # if type(response) != str:
-    #     flag = True
-    #     string = etree.tostring(response, encoding="unicode")
-
-    return BeautifulSoup(string if flag else response, "xml")
+    return BeautifulSoup(response, "xml")
 
 
 def zeep_to_dict(response, get_key: str = None):
@@ -96,6 +91,6 @@ def define_my_xml_doc(xml_doc: str, single_line=False, **kwargs):
         xml_doc = xml_doc.replace(replacement, str(value))
 
     if single_line:
-        xml_doc = "".join(xml_doc.split())
+        xml_doc = "".join(xml_doc.splitlines()).replace("  ", "")
 
     return xml_doc

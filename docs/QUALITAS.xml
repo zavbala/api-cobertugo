@@ -1,113 +1,135 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <Movimientos>
-    <Movimiento TipoMovimiento="3" NoPoliza="" NoCotizacion="" NoEndoso="" TipoEndoso="" NoOTra=""
-        NoNegocio="###">
-        <DatosAsegurado NoAsegurado="">
-            <Nombre>John Doe</Nombre>
-            <Direccion>42 Wallaby Way, Sydney</Direccion>
-            <Colonia></Colonia>
-            <Poblacion>{ locality }</Poblacion>
-            <Estado>{ area }</Estado>
-            <CodigoPostal>{ zip_code }</CodigoPostal>
-            <NoEmpleado />
-            <Agrupador />
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>1</TipoRegla>
-                <ValorRegla>No Exterior</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>2</TipoRegla>
-                <ValorRegla>No Interior</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>3</TipoRegla>
-                <ValorRegla>Pais</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>4</TipoRegla>
-                <ValorRegla>Nombre1 Nombre2</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>5</TipoRegla>
-                <ValorRegla>ApellidoPat</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>6</TipoRegla>
-                <ValorRegla>ApellidoMat</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>7</TipoRegla>
-                <ValorRegla>Código Municipio dom. legal</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-            <ConsideracionesAdicionalesDA NoConsideracion="40">
-                <TipoRegla>8</TipoRegla>
-                <ValorRegla>Código Colonia dom. Legal</ValorRegla>
-            </ConsideracionesAdicionalesDA>
-        </DatosAsegurado>
-
-        <DatosVehiculo NoInciso="1">
-            <ClaveAmis>05818</ClaveAmis>
-            <Modelo>{ year }</Modelo>
-            <DescripcionVehiculo />
-            <Uso>1</Uso>
-            <Servicio>1</Servicio>
-            <Paquete>1</Paquete>
-            <Motor>Motor</Motor>
-            <Serie>Serie</Serie>
-            <Coberturas NoCobertura="01">
-                <SumaAsegurada>350000</SumaAsegurada>
-                <TipoSuma>1</TipoSuma>
-                <Deducible>5</Deducible>
-                <Prima>0</Prima>
-            </Coberturas>
-            <Coberturas NoCobertura="03">
-                <SumaAsegurada>350000</SumaAsegurada>
-                <TipoSuma>1</TipoSuma>
-                <Deducible>10</Deducible>
-                <Prima>0</Prima>
-            </Coberturas>
-            <Coberturas NoCobertura="04">
-                <SumaAsegurada>1000000</SumaAsegurada>
-                <TipoSuma>1</TipoSuma>
-                <Deducible />
-                <Prima>0</Prima>
-            </Coberturas>
-            <Coberturas NoCobertura="05">
-                <SumaAsegurada>250000</SumaAsegurada>
-                <TipoSuma>0</TipoSuma>
-                <Deducible>0</Deducible>
-                <Prima>0</Prima>
-            </Coberturas>
-        </DatosVehiculo>
-
-        <DatosGenerales>
-            <FechaEmision>{ today }</FechaEmision>
-            <FechaInicio>{ today }</FechaInicio>
-            <FechaTermino>{ future }</FechaTermino>
-            <Moneda>00</Moneda>
-            <Agente>#####</Agente>
-            <FormaPago>C</FormaPago>
-            <TarifaValores>####</TarifaValores>
-            <TarifaCuotas>####</TarifaCuotas>
-            <TarifaDerechos>####</TarifaDerechos>
-            <Plazo />
-            <Agencia />
-            <Contrato />
-            <PorcentajeDescuento>5</PorcentajeDescuento>
-            <ConsideracionesAdicionalesDG NoConsideracion="1">
-                <TipoRegla>1</TipoRegla>
-                <ValorRegla>Dígito Verificador: 6</ValorRegla>
-            </ConsideracionesAdicionalesDG>
-        </DatosGenerales>
-
-        <Primas>
-            <PrimaNeta />
-            <Derecho>340</Derecho>
-            <Recargo />
-            <Impuesto />
-            <PrimaTotal />
-            <Comision />
-        </Primas>
-        <CodigoError />
-    </Movimiento>
+  <Movimiento TipoMovimiento="3" NoPoliza="" NoCotizacion="" NoEndoso="" TipoEndoso="" NoOTra="" NoNegocio="###">
+    <DatosAsegurado NoAsegurado="">
+      <Nombre />
+      <Direccion />
+      <Colonia />
+      <Poblacion />
+      <Estado>{ area }</Estado>
+      <CodigoPostal>{ zip_code }</CodigoPostal>
+      <NoEmpleado />
+      <Agrupador />
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>1</TipoRegla>
+        <ValorRegla>No Exterior</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>2</TipoRegla>
+        <ValorRegla>No Interior</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>3</TipoRegla>
+        <ValorRegla>Pais</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>4</TipoRegla>
+        <ValorRegla>Nombre1 Nombre2</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>5</TipoRegla>
+        <ValorRegla>ApellidoPat</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>6</TipoRegla>
+        <ValorRegla>ApellidoMat</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>7</TipoRegla>
+        <ValorRegla>Código Municipio dom. legal</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+      <ConsideracionesAdicionalesDA NoConsideracion="40">
+        <TipoRegla>8</TipoRegla>
+        <ValorRegla>Código Colonia dom. Legal</ValorRegla>
+      </ConsideracionesAdicionalesDA>
+    </DatosAsegurado>
+    <DatosVehiculo NoInciso="1">
+      <ClaveAmis>00056</ClaveAmis>
+      <Modelo>{ year }</Modelo>
+      <DescripcionVehiculo />
+      <Uso>01</Uso>
+      <Servicio>01</Servicio>
+      <Paquete>01</Paquete>
+      <Motor />
+      <Serie />
+      <Coberturas NoCobertura="01">
+        <SumaAsegurada>0</SumaAsegurada>
+        <TipoSuma>0</TipoSuma>
+        <Deducible>5</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="03">
+        <SumaAsegurada>0</SumaAsegurada>
+        <TipoSuma>0</TipoSuma>
+        <Deducible>10</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="04">
+        <SumaAsegurada>3000000</SumaAsegurada>
+        <TipoSuma>0</TipoSuma>
+        <Deducible>0</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="05">
+        <SumaAsegurada>160000</SumaAsegurada>
+        <TipoSuma>0</TipoSuma>
+        <Deducible>0</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="06">
+        <SumaAsegurada>0</SumaAsegurada>
+        <TipoSuma>0</TipoSuma>
+        <Deducible>0</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="07">
+        <SumaAsegurada />
+        <TipoSuma>0</TipoSuma>
+        <Deducible>0</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+      <Coberturas NoCobertura="14">
+        <SumaAsegurada />
+        <TipoSuma>0</TipoSuma>
+        <Deducible>0</Deducible>
+        <Prima>0</Prima>
+      </Coberturas>
+    </DatosVehiculo>
+    <DatosGenerales>
+      <FechaEmision>2020-01-30</FechaEmision>
+      <FechaInicio>2020-02-28</FechaInicio>
+      <FechaTermino>2021-02-28</FechaTermino>
+      <Moneda>00</Moneda>
+      <Agente>75931</Agente>
+      <FormaPago>C</FormaPago>
+      <TarifaValores>LINEA</TarifaValores>
+      <TarifaCuotas>LINEA</TarifaCuotas>
+      <TarifaDerechos>LINEA</TarifaDerechos>
+      <Plazo />
+      <Agencia />
+      <Contrato />
+      <PorcentajeDescuento>40</PorcentajeDescuento>
+      <ConsideracionesAdicionalesDG NoConsideracion="1">
+        <TipoRegla>1</TipoRegla>
+        <ValorRegla>7</ValorRegla>
+      </ConsideracionesAdicionalesDG>
+      <ConsideracionesAdicionalesDG NoConsideracion="4">
+        <TipoRegla />
+        <ValorRegla>1</ValorRegla>
+      </ConsideracionesAdicionalesDG>
+      <ConsideracionesAdicionalesDG NoConsideracion="5">
+        <TipoRegla />
+        <ValorRegla>14</ValorRegla>
+      </ConsideracionesAdicionalesDG>
+    </DatosGenerales>
+    <Primas>
+      <PrimaNeta />
+      <Derecho>500</Derecho>
+      <Recargo />
+      <Impuesto />
+      <PrimaTotal />
+      <Comision />
+    </Primas>
+    <CodigoError />
+  </Movimiento>
 </Movimientos>

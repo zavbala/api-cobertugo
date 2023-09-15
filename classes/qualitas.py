@@ -1,6 +1,11 @@
 from classes.soap import Soap
-from app.resources import strings, utils
+from app.resources import utils
 from bs4 import Tag
+from datetime import datetime, timedelta
+
+format = "%Y-%m-%d"
+today = datetime.today().strftime(format)
+one_year_later = (datetime.today() + timedelta(days=365)).strftime(format)
 
 
 class Qualitas(Soap):
@@ -33,5 +38,19 @@ class Qualitas(Soap):
 
         return output
 
-    def get_quotas(self):
-        URL = ""
+    def get_quotes(self):
+        URL = "https://qa.qualitas.com.mx:8443/WsEmision/WsEmision.asmx"
+
+        with open("docs/dummy.xml") as file:
+            xml = file.read()
+
+        args = {
+            **self.__dict__,
+            "today": today,
+            "future": one_year_later,
+        }
+
+        # document = utils.define_my_xml_doc(xml, **args).replace(" />", "/>")
+        response = self.call("obtenerNuevaEmision", {"xmlEmision": xml}, url=URL)
+
+        return response
