@@ -9,6 +9,8 @@ from lxml import etree
 from parsel import Selector
 from zeep.helpers import serialize_object
 import xml.dom.minidom
+import re
+from thefuzz import fuzz
 
 
 def resolve_parsel_schema(schema: dict, text: str, selector: str):
@@ -94,3 +96,36 @@ def define_my_xml_doc(xml_doc: str, single_line=False, **kwargs):
         xml_doc = "".join(xml_doc.splitlines()).replace("  ", "")
 
     return xml_doc
+
+def normalize(value: str):
+
+    output = value
+
+    door_rgx = r"4\sPUERTAS|4P"
+    manual_rgx = r"STD|ESTANDAR"
+    automatic_rgx = r"AUT|AUTOMATICO"
+    keys = ("4PTAS", "ESTANDAR", "AUTOMATICA")
+
+    for key, expression in enumerate([door_rgx, manual_rgx, automatic_rgx]):
+        if match := re.search(expression, output, re.IGNORECASE):
+            to_replace = keys[key]
+            coincidence = match.group()
+            output = output.replace(coincidence, to_replace)
+
+    return output
+
+def fuzzy_match(base: str, elements: list) -> dict:
+    ratio, selected = 0, {}
+
+    for element in elements:
+        print(f"Comparing {base} with {element['version']}")
+        scope = fuzz.token_sort_ratio(base, element["version"])
+
+        print(ratio)
+
+        if scope > ratio:
+            ratio = scope
+            selected = element
+
+    print(f"Selected: {selected} with {ratio} of similarity")
+    return selected

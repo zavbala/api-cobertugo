@@ -17,6 +17,7 @@ pydantic = "^2.2.1"
 zeep = "^4.2.1"
 glom = "^23.3.0"
 parsel = "^1.8.1"
+thefuzz = "^0.20.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

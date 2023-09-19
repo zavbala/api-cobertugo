@@ -4,6 +4,7 @@ from zeep import AnyObject, Client
 from zeep.exceptions import Fault
 from zeep.plugins import HistoryPlugin
 from zeep.wsse.username import UsernameToken
+import os
 
 from app.resources import utils
 
@@ -82,7 +83,8 @@ class Soap:
         if retries == self.MAX_RETRIES:
             raise Exception("Max retries reached")
 
-        print(history.last_sent)
-        print(history.last_received)
+        if os.environ.get("ENVIROMENT") == "development":
+            print(history.last_sent)
+            print(history.last_received)
 
         return result
