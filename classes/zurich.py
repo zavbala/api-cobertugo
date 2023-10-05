@@ -15,7 +15,7 @@ constants = {
 
 schema = {
     "id": "id_cobertura",
-    "slug": "descripcion_cobertura",
+    "description": "descripcion_cobertura",
     "percentage": "porcentaje_deducible",
 }
 

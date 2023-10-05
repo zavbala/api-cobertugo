@@ -53,8 +53,8 @@ class Soap:
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
 
-            print(result)
-            print(type(result))
+            # print(result)
+            # print(type(result))
 
             if type(result) == str or isinstance(result, _Element):
                 if isinstance(result, _Element):
@@ -72,19 +72,26 @@ class Soap:
     @parse_response
     def call(self, method: str, payload: dict, **kwargs):
         retries = 0
+        result = None
 
         while retries < self.MAX_RETRIES:
             try:
                 result = self.client(**kwargs).service[method](**payload)
                 break
-            except Fault as e:
+            except Fault as exception:
+                if retries == 0:
+                    print(exception.message)
+
                 retries += 1
 
         if retries == self.MAX_RETRIES:
-            raise Exception("Max retries reached")
+            print("Max retries reached")
 
-        if os.environ.get("ENVIROMENT") == "development":
-            print(history.last_sent)
-            print(history.last_received)
+        if os.environ.get("ENVIRONMENT") == "development":
+            print(" ")
+            # print(history.last_sent)
+            print(" ")
+            # print(history.last_received)
+            print(" ")
 
         return result

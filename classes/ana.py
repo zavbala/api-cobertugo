@@ -1,13 +1,21 @@
-from classes.soap import Soap
-from app.resources import strings, utils
 from datetime import datetime, timedelta
+
 from lxml import etree
-from zeep import xsd, Client
+
+from app.resources import utils
+from classes.soap import Soap
 
 constants = {
     "Negocio": 2124,
     "Usuario": 19515,
     "Clave": "G5V3w3RR",
+}
+
+quota = {
+    "prima": "pma",
+    "amount": "sa",
+    "percentage": "ded",
+    "description": "desc",
 }
 
 format = "%d/%m/%Y"
@@ -61,6 +69,7 @@ class Ana(Soap):
 
         args = {
             **self.__dict__,
+            "area": "08019",
             "today": today,
             "future": one_year_later,
         }
@@ -69,15 +78,24 @@ class Ana(Soap):
             " />", "/>"
         )
 
-        value = xsd.AnyObject(xsd.String(), document)
+        tree = etree.fromstring(document)
 
         payload = {
-            "XML": value,
+            "XML": tree,
             "Usuario": 19515,
             "Clave": "x3J1Sj2Y",
             "Tipo": "Cotizacion",
         }
 
+        output = []
         response = self.call("Transaccion", payload, url=self.URL)
 
-        return response
+        for item in response.find_all("cobertura"):
+            _dict_ = {}
+
+            for key, value in quota.items():
+                _dict_[key] = item[value]
+
+            output.append(_dict_)
+
+        return output

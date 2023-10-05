@@ -1,6 +1,6 @@
 <transacciones xmlns="">
   <transaccion version="1" tipotransaccion="C" cotizacion="" negocio="2124" tiponegocio="">
-    <vehiculo id="1" amis="C0560003" modelo="{ year }" descripcion="" uso="1" servicio="1" plan="1" motor="" serie="" repuve="" placas="" conductor="" conductorliciencia="" conductorfecnac="" conductorocupacion="" estado="{ area }" poblacion="{ locality }" color="01" dispositivo="" fecdispositivo="" tipocarga="" tipocargadescripcion="">
+    <vehiculo id="1" amis="C0560003" modelo="{ year }" descripcion="" uso="1" servicio="1" plan="1" motor="" serie="" repuve="" placas="" conductor="" conductorliciencia="" conductorfecnac="" conductorocupacion="" estado="{ area }" poblacion="" color="01" dispositivo="" fecdispositivo="" tipocarga="" tipocargadescripcion="">
       <cobertura id="02" desc="" sa="" tipo="3" ded="5" pma="" />
       <cobertura id="04" desc="" sa="" tipo="3" ded="10" pma="" />
       <cobertura id="06" desc="" sa="300000" tipo="" ded="" pma="" />

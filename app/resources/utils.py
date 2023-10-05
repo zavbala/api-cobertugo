@@ -1,4 +1,5 @@
 import json
+import re
 import xml.dom.minidom
 from typing import Union
 
@@ -7,10 +8,8 @@ from bs4 import BeautifulSoup
 from glom import glom
 from lxml import etree
 from parsel import Selector
-from zeep.helpers import serialize_object
-import xml.dom.minidom
-import re
 from thefuzz import fuzz
+from zeep.helpers import serialize_object
 
 
 def resolve_parsel_schema(schema: dict, text: str, selector: str):
@@ -97,8 +96,8 @@ def define_my_xml_doc(xml_doc: str, single_line=False, **kwargs):
 
     return xml_doc
 
-def normalize(value: str):
 
+def normalize(value: str):
     output = value
 
     door_rgx = r"4\sPUERTAS|4P"
@@ -113,6 +112,7 @@ def normalize(value: str):
             output = output.replace(coincidence, to_replace)
 
     return output
+
 
 def fuzzy_match(base: str, elements: list) -> dict:
     ratio, selected = 0, {}
