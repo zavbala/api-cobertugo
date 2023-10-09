@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from collections import Counter
 from lxml import etree
 
 from app.resources import utils
@@ -44,6 +44,31 @@ class Ana(Soap):
         for item in response.find_all("submarca"):
             output.append({"slug": item.text, "id": item["clave"]})
 
+        slugs = [item["slug"] for item in output]
+
+        # Check for duplicates
+        elements = Counter(slugs)
+
+        # Get indexes of duplicates
+        duplicate_indexes = {
+            key: [index for index, value in enumerate(slugs) if value == key]
+            for key, count in elements.items()
+            if count > 1
+        }
+
+        if duplicate_indexes:
+            main, *duplicates = list(duplicate_indexes.values())[0]
+
+            output[main]["id"] = (
+                output[main]["id"]
+                + "-"
+                + "-".join([output[item]["id"] for item in duplicates])
+            )
+
+            # Remove duplicates from main list
+            for item in duplicates:
+                del output[item]
+
         return output
 
     def get_versions(self):
@@ -52,14 +77,15 @@ class Ana(Soap):
         payload = {
             "Marca": self.brand,
             "Modelo": self.year,
-            "Submarca": self.model,
             **constants,
         }
 
-        response = self.call("Vehiculo", payload, url=self.URL)
+        for slug in self.model.split("-"):
+            payload["Submarca"] = slug
+            response = self.call("Vehiculo", payload, url=self.URL)
 
-        for item in response.find_all("vehiculo"):
-            output.append({"version": item.text, "id": item["clave"]})
+            for item in response.find_all("vehiculo"):
+                output.append({"version": item.text, "id": item["clave"]})
 
         return output
 
