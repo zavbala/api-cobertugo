@@ -1,10 +1,11 @@
+import os
+
 from lxml import etree
 from lxml.etree import _Element
 from zeep import AnyObject, Client
 from zeep.exceptions import Fault
 from zeep.plugins import HistoryPlugin
 from zeep.wsse.username import UsernameToken
-import os
 
 from app.resources import utils
 
@@ -56,8 +57,11 @@ class Soap:
             # print(result)
             # print(type(result))
 
+            return []
+
             if type(result) == str or isinstance(result, _Element):
                 if isinstance(result, _Element):
+                    print("ALV LOCO NO MMS")
                     result = etree.tostring(result, encoding="unicode")
 
                 return utils.zeep_to_bs4(result)

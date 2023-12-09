@@ -32,6 +32,7 @@ class Zurich(Soap):
         brand_id, _ = utils.resolve_brand(self.brand, "ZURICH")
         URL = "https://uat.ezurich.com.mx:443/ZurichWS/autos/consultaClavesVehiculos/publicService"
 
+        sub_brand_id = None
         sub_brands = self.get_brands()
 
         for item in sub_brands:

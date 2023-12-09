@@ -1,7 +1,10 @@
-from classes.soap import Soap
-from app.resources import utils
-from bs4 import Tag
 from datetime import datetime, timedelta
+
+from bs4 import Tag
+from lxml import etree
+
+from app.resources import utils
+from classes.soap import Soap
 
 format = "%Y-%m-%d"
 today = datetime.today().strftime(format)
@@ -41,7 +44,7 @@ class Qualitas(Soap):
     def get_quotes(self):
         URL = "https://qa.qualitas.com.mx:8443/WsEmision/WsEmision.asmx"
 
-        with open("docs/dummy.xml") as file:
+        with open("docs/QUALITAS.xml") as file:
             xml = file.read()
 
         args = {
@@ -50,7 +53,14 @@ class Qualitas(Soap):
             "future": one_year_later,
         }
 
-        # document = utils.define_my_xml_doc(xml, **args).replace(" />", "/>")
-        response = self.call("obtenerNuevaEmision", {"xmlEmision": xml}, url=URL)
+        document = utils.define_my_xml_doc(xml, **args).replace(" />", "/>")
+        # tree = etree.fromstring(document)
+        # print(document)
+        # return []
+
+        response = self.call("obtenerNuevaEmision", {"xmlEmision": document}, url=URL)
+
+        # print(response)
+        return []
 
         return response

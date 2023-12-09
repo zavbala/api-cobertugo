@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from collections import Counter
 from lxml import etree
-
+from bs4 import Tag
 from app.resources import utils
 from classes.soap import Soap
 
@@ -16,6 +16,12 @@ quota = {
     "amount": "sa",
     "percentage": "ded",
     "description": "desc",
+}
+
+plans = {
+"1": "Amplia",
+"3": "Limitada",
+"4": "Responsabilidad Civil",
 }
 
 format = "%d/%m/%Y"
@@ -95,33 +101,38 @@ class Ana(Soap):
 
         args = {
             **self.__dict__,
-            "area": "08019",
             "today": today,
             "future": one_year_later,
+            "area": self.area + self.locality,
         }
 
-        document = utils.define_my_xml_doc(xml, single_line=True, **args).replace(
-            " />", "/>"
-        )
+        docs, output = [], []
 
-        tree = etree.fromstring(document)
+        for plan in plans.keys():
+            args["plan"] = plan
+            document = utils.define_my_xml_doc(xml, single_line=True, **args).replace(" />", "/>")
 
-        payload = {
-            "XML": tree,
-            "Usuario": 19515,
-            "Clave": "x3J1Sj2Y",
-            "Tipo": "Cotizacion",
-        }
+            docs.append(document)
+            tree = etree.fromstring(document)
 
-        output = []
-        response = self.call("Transaccion", payload, url=self.URL)
+            payload = {
+                "XML": tree,
+                "Usuario": 19515,
+                "Clave": "x3J1Sj2Y",
+                "Tipo": "Cotizacion",
+            }
 
-        for item in response.find_all("cobertura"):
-            _dict_ = {}
+            details = []
+            response: Tag = self.call("Transaccion", payload, url=self.URL)
 
-            for key, value in quota.items():
-                _dict_[key] = item[value]
+            for item in response.find_all("cobertura"):
+                _dict_ = {}
 
-            output.append(_dict_)
+                for key, value in quota.items():
+                    _dict_[key] = item[value].strip()
+
+                details.append(_dict_)
+
+            output.append({"name": plans[plan],"details": details})
 
         return output

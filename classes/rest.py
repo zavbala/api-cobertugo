@@ -34,4 +34,4 @@ class Rest:
         self.quantity = quantity
 
     def call(self, method, url, **kwargs):
-        return httpx.request(method, url, **kwargs)
+        return httpx.request(method, url, timeout=3000, **kwargs)

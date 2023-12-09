@@ -16,25 +16,29 @@ class ProviderData(BaseModel):
     slug: Optional[str]
 
 
-@router.post("")
-async def get_models(body: ProviderData):
-    dict_body = body.model_dump()
-    del dict_body["provider"]
+@router.get("/{id}/versions")
+async def get_versions_by_model(id: str, brand: str, year: int, slug: str, provider: Optional[str] = "ANA"):
+    instance = TREE.get(provider)
 
-    provider = TREE.get(body.provider)
+    dict_body = {
+        "model": id,
+        "year": year,
+        "slug": slug,
+        "brand": brand,
+    }
 
-    if body.provider == "AFIRME":
-        instance = provider(url="https://www.afirmeseguros.com/gateway", **dict_body)
+    if provider == "AFIRME":
+        object = instance(url="https://www.afirmeseguros.com/gateway", **dict_body)
     else:
-        instance = provider(**dict_body)
+        object = instance(**dict_body)
 
-    versions = instance.get_versions()
+    versions = object.get_versions()
 
     return {
-        "year": body.year,
-        "model": body.model,
-        "brand": body.brand,
-        "provider": body.provider,
-        "slug": body.slug,
+        "model": id,
+        "year": year,
+        "slug": slug,
+        "brand": brand,
         "data": versions,
+        "provider": provider,
     }
