@@ -1,9 +1,8 @@
 [tool.poetry]
 name = "cobertugo"
 version = "0.1.0"
-description = ""
+description = "Car insurance quote scraper"
 authors = ["Jeremy Zabala <jeremy.zbala@gmail.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -19,6 +18,7 @@ glom = "^23.3.0"
 parsel = "^1.8.1"
 thefuzz = "^0.20.0"
 numpy = "^1.26.2"
+gunicorn = "^21.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

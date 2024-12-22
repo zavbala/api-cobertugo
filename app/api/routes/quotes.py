@@ -1,18 +1,23 @@
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+
 from classes import TREE
 
 router = APIRouter()
+
 
 class Car(BaseModel):
     id: str
     year: int
     brand: str
 
+
 class User(BaseModel):
     age: int
     gender: str
+
 
 class Place(BaseModel):
     area: str
@@ -30,8 +35,6 @@ class Body(BaseModel):
     locality: str
     zip_code: int
     quantity: Optional[int] = 55_000_000
-
-
 
 
 @router.post("")

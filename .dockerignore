@@ -1,0 +1,4 @@
+fly.toml
+data/docs
+**/__pycache__
+**/.pytest_cache

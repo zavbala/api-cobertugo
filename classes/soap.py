@@ -57,8 +57,6 @@ class Soap:
             # print(result)
             # print(type(result))
 
-            return []
-
             if type(result) == str or isinstance(result, _Element):
                 if isinstance(result, _Element):
                     print("ALV LOCO NO MMS")

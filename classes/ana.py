@@ -1,7 +1,9 @@
-from datetime import datetime, timedelta
 from collections import Counter
-from lxml import etree
+from datetime import datetime, timedelta
+
 from bs4 import Tag
+from lxml import etree
+
 from app.resources import utils
 from classes.soap import Soap
 
@@ -19,9 +21,9 @@ quota = {
 }
 
 plans = {
-"1": "Amplia",
-"3": "Limitada",
-"4": "Responsabilidad Civil",
+    "1": "Amplia",
+    "3": "Limitada",
+    "4": "Responsabilidad Civil",
 }
 
 format = "%d/%m/%Y"
@@ -45,7 +47,11 @@ class Ana(Soap):
             **constants,
         }
 
+        print(payload)
+
         response = self.call("SubMarca", payload, url=self.URL)
+
+        print(response)
 
         for item in response.find_all("submarca"):
             output.append({"slug": item.text, "id": item["clave"]})
@@ -110,7 +116,9 @@ class Ana(Soap):
 
         for plan in plans.keys():
             args["plan"] = plan
-            document = utils.define_my_xml_doc(xml, single_line=True, **args).replace(" />", "/>")
+            document = utils.define_my_xml_doc(xml, single_line=True, **args).replace(
+                " />", "/>"
+            )
 
             docs.append(document)
             tree = etree.fromstring(document)
@@ -133,6 +141,6 @@ class Ana(Soap):
 
                 details.append(_dict_)
 
-            output.append({"name": plans[plan],"details": details})
+            output.append({"name": plans[plan], "details": details})
 
         return output
